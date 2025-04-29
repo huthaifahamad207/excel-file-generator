@@ -78,7 +78,7 @@ function HomePage() {
             },
           }}
         >
-          اختر ملف Excel
+          Choose your Excel file
         </label>
         <input
           id="upload"
