@@ -5,9 +5,9 @@ import Barcode from "react-barcode";
 function ReviewPage() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { rowData, columnNames } = location.state || {};
+  const { rowData = [], columnNames = [] } = location.state || {};
 
-  if (!rowData) {
+  if (!rowData || rowData.length === 0) {
     return (
       <div style={styles.noDataContainer}>
         <div style={styles.noDataContent}>
@@ -24,20 +24,23 @@ function ReviewPage() {
     window.print();
   };
 
-  const barcodeValue = rowData.join("|") || "DEFAULT-CODE";
+  // const barcodeValue =
+  //   rowData.filter((val) => val && val.toString().trim() !== "").join("-") ||
+  //   "DEFAULT-CODE";
+
+  const barcodeValue =
+    rowData.find((val) => val && val.toString().trim() !== "") ||
+    "DEFAULT-CODE";
 
   return (
     <div style={styles.pageContainer}>
       <div style={styles.shippingLabel}>
+        {/* Header Section */}
         <div style={styles.labelHeader}>
           <div style={styles.headerLeft}>
-            <div style={styles.logo}> SHIPPING</div>
-            <div style={styles.shipmentType}>STANDARD SHIPPING</div>
+            <div style={styles.logo}>SHIPPING LABEL</div>
           </div>
           <div style={styles.headerRight}>
-            <div style={styles.trackingNumber}>
-              TRACKING #: {barcodeValue.substring(0, 12)}...
-            </div>
             <div style={styles.date}>
               {new Date().toLocaleDateString("en-US", {
                 year: "numeric",
@@ -48,77 +51,83 @@ function ReviewPage() {
           </div>
         </div>
 
-        <div style={styles.barcodeSection}>
-          <Barcode
-            value={barcodeValue}
-            width={2}
-            height={80}
-            fontSize={16}
-            margin={10}
-            background="transparent"
-            lineColor="#2c3e50"
-          />
-        </div>
+        {/* Main Content */}
+        <div style={styles.contentContainer}>
+          {/* Sender and Receiver Info */}
+          <div style={styles.addressSection}>
+            <div style={styles.senderSection}>
+              <div style={styles.sectionHeader}>SHIP FROM</div>
+              <div style={styles.addressBox}>
+                {columnNames.slice(0, 4).map(
+                  (colName, index) =>
+                    rowData[index] && (
+                      <div key={index} style={styles.addressField}>
+                        <span style={styles.fieldLabel}>{colName}:</span>
+                        <span style={styles.fieldValue} title={rowData[index]}>
+                          {rowData[index]}
+                        </span>
+                      </div>
+                    )
+                )}
+              </div>
+            </div>
 
-        <div style={styles.contentGrid}>
-          <div style={styles.senderSection}>
-            <div style={styles.sectionHeader}>SHIP FROM</div>
-            <div style={styles.addressBox}>
-              <div style={styles.addressField}>
-                <span style={styles.fieldLabel}>Company:</span>
-                <span style={styles.fieldValue}>Your Company Name</span>
-              </div>
-              <div style={styles.addressField}>
-                <span style={styles.fieldLabel}>Address:</span>
-                <span style={styles.fieldValue}>
-                  123 Business St, Industrial Zone
-                </span>
-              </div>
-              <div style={styles.addressField}>
-                <span style={styles.fieldLabel}>City:</span>
-                <span style={styles.fieldValue}>Amman</span>
-              </div>
-              <div style={styles.addressField}>
-                <span style={styles.fieldLabel}>Phone:</span>
-                <span style={styles.fieldValue}>+962 6 400 1000</span>
+            <div style={styles.receiverSection}>
+              <div style={styles.sectionHeader}>SHIP TO</div>
+              <div style={styles.addressBox}>
+                {columnNames.slice(4, 8).map(
+                  (colName, index) =>
+                    rowData[index + 4] && (
+                      <div key={index} style={styles.addressField}>
+                        <span style={styles.fieldLabel}>{colName}:</span>
+                        <span
+                          style={styles.fieldValue}
+                          title={rowData[index + 4]}
+                        >
+                          {rowData[index + 4]}
+                        </span>
+                      </div>
+                    )
+                )}
               </div>
             </div>
           </div>
 
-          <div style={styles.receiverSection}>
-            <div style={styles.sectionHeader}>SHIP TO</div>
-            <div style={styles.addressBox}>
-              {columnNames.slice(0, 4).map((colName, index) => (
-                <div key={index} style={styles.addressField}>
-                  <span style={styles.fieldLabel}>{colName}:</span>
-                  <span style={styles.fieldValue}>
-                    {rowData[index] || "N/A"}
-                  </span>
-                </div>
-              ))}
+          {/* Barcode and Order Info */}
+          <div style={styles.infoSection}>
+            <div style={styles.barcodeContainer}>
+              <Barcode
+                value={barcodeValue.toString()}
+                width={1.5}
+                height={50}
+                fontSize={12}
+                margin={5}
+              />
+            </div>
+            <div style={styles.orderDetails}>
+              <div style={styles.sectionHeader}>ORDER DETAILS</div>
+              <div style={styles.detailsGrid}>
+                {columnNames.slice(8).map(
+                  (colName, index) =>
+                    rowData[index + 8] && (
+                      <div key={index} style={styles.detailItem}>
+                        <span style={styles.detailLabel}>{colName}:</span>
+                        <span
+                          style={styles.detailValue}
+                          title={rowData[index + 8]}
+                        >
+                          {rowData[index + 8]}
+                        </span>
+                      </div>
+                    )
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div style={styles.orderDetails}>
-          <div style={styles.sectionHeader}>ORDER DETAILS</div>
-          <div style={styles.detailsGrid}>
-            {columnNames.slice(4).map((colName, index) => (
-              <div key={index} style={styles.detailItem}>
-                <span style={styles.detailLabel}>{colName}:</span>
-                <span style={styles.detailValue}>
-                  {rowData[index + 4] || "N/A"}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
+        {/* Footer */}
         <div style={styles.footer}>
-          {/* <div style={styles.footerNote}>
-            <strong>Note:</strong> This label contains a unique barcode for
-            tracking purposes.
-          </div> */}
           <div style={styles.actionButtons}>
             <button
               onClick={() => navigate("/")}
@@ -136,6 +145,7 @@ function ReviewPage() {
   );
 }
 
+// Styles
 const styles = {
   pageContainer: {
     display: "flex",
@@ -154,72 +164,50 @@ const styles = {
     borderRadius: "8px",
     boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
     overflow: "hidden",
+    display: "flex",
+    flexDirection: "column",
   },
   labelHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "#2c3e50",
+    backgroundColor: "#217346",
     color: "white",
     padding: "15px 25px",
-    borderBottom: "3px solid #3498db",
+    borderBottom: "3px solid #1a5d38",
   },
   headerLeft: {
     display: "flex",
     flexDirection: "column",
   },
   logo: {
-    fontSize: "20px",
+    fontSize: "18px",
     fontWeight: "bold",
     letterSpacing: "1px",
-    marginBottom: "5px",
-    color: "#3498db",
-  },
-  shipmentType: {
-    fontSize: "14px",
-    fontWeight: "bold",
-    color: "#ecf0f1",
-    padding: "4px 8px",
-    backgroundColor: "#3498db",
-    borderRadius: "4px",
-    display: "inline-block",
   },
   headerRight: {
     textAlign: "right",
-  },
-  trackingNumber: {
-    fontSize: "14px",
-    fontWeight: "600",
-    marginBottom: "5px",
   },
   date: {
     fontSize: "14px",
     fontWeight: "600",
   },
-  barcodeSection: {
-    padding: "25px",
+  contentContainer: {
     display: "flex",
-    justifyContent: "center",
-    backgroundColor: "#f8f9fa",
-    borderBottom: "1px solid #e0e0e0",
+    flexDirection: "column",
+    padding: "20px",
   },
-  contentGrid: {
+  addressSection: {
     display: "grid",
     gridTemplateColumns: "1fr 1fr",
     gap: "20px",
-    padding: "25px",
-  },
-  senderSection: {
-    gridColumn: "1",
-  },
-  receiverSection: {
-    gridColumn: "2",
+    marginBottom: "20px",
   },
   sectionHeader: {
     fontSize: "16px",
     fontWeight: "bold",
     color: "#2c3e50",
-    marginBottom: "15px",
+    marginBottom: "10px",
     paddingBottom: "5px",
     borderBottom: "2px solid #e0e0e0",
     textTransform: "uppercase",
@@ -231,56 +219,77 @@ const styles = {
     border: "1px solid #e0e0e0",
   },
   addressField: {
-    marginBottom: "10px",
+    marginBottom: "8px",
     display: "flex",
+    minHeight: "20px",
   },
   fieldLabel: {
     fontSize: "12px",
     color: "#7f8c8d",
     fontWeight: "600",
     marginRight: "8px",
-    minWidth: "100px",
-    display: "inline-block",
+    minWidth: "80px",
   },
   fieldValue: {
-    fontSize: "14px",
-    fontWeight: "bold",
+    fontSize: "13px",
+    fontWeight: "500",
     wordBreak: "break-word",
     flex: 1,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "normal", //
+  },
+  infoSection: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+  },
+  barcodeContainer: {
+    flex: 1,
+    display: "flex",
+    justifyContent: "center",
+    padding: "10px",
+    backgroundColor: "#f8f9fa",
+    borderRadius: "6px",
+    border: "1px solid #e0e0e0",
+    maxWidth: "300px",
   },
   orderDetails: {
-    padding: "0 25px 25px 25px",
+    flex: 1,
+    marginLeft: "20px",
   },
   detailsGrid: {
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-    gap: "15px",
+    gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+    gap: "10px",
   },
   detailItem: {
-    marginBottom: "10px",
+    marginBottom: "8px",
+    display: "flex",
   },
   detailLabel: {
     fontSize: "12px",
     color: "#7f8c8d",
     fontWeight: "600",
     marginRight: "8px",
+    minWidth: "80px",
+    whiteSpace: "normal",
   },
   detailValue: {
-    fontSize: "14px",
-    fontWeight: "bold",
+    fontSize: "13px",
+    fontWeight: "500",
+    wordBreak: "break-word",
+    flex: 1,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
   },
   footer: {
-    padding: "20px 25px",
+    padding: "15px 25px",
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: "flex-end",
     backgroundColor: "#f8f9fa",
     borderTop: "1px solid #e0e0e0",
-  },
-  footerNote: {
-    fontSize: "12px",
-    color: "#7f8c8d",
-    maxWidth: "60%",
   },
   actionButtons: {
     display: "flex",
@@ -288,7 +297,7 @@ const styles = {
   },
   primaryButton: {
     padding: "10px 20px",
-    backgroundColor: "#3498db",
+    backgroundColor: "#217346",
     color: "white",
     border: "none",
     borderRadius: "4px",
@@ -296,9 +305,8 @@ const styles = {
     fontSize: "14px",
     fontWeight: "bold",
     transition: "all 0.3s",
-    boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
     ":hover": {
-      backgroundColor: "#2980b9",
+      backgroundColor: "#1a5d38",
     },
   },
   secondaryButton: {
@@ -337,7 +345,7 @@ const styles = {
   },
   backButton: {
     padding: "12px 24px",
-    backgroundColor: "#3498db",
+    backgroundColor: "#217346",
     color: "white",
     border: "none",
     borderRadius: "4px",
@@ -346,7 +354,7 @@ const styles = {
     fontWeight: "bold",
     transition: "all 0.3s",
     ":hover": {
-      backgroundColor: "#2980b9",
+      backgroundColor: "#1a5d38",
     },
   },
 };
