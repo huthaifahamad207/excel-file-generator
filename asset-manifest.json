@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/excel-file-generator/static/css/main.f855e6bc.css",
+    "main.js": "/excel-file-generator/static/js/main.3d8ae718.js",
+    "static/js/453.da4d770b.chunk.js": "/excel-file-generator/static/js/453.da4d770b.chunk.js",
+    "index.html": "/excel-file-generator/index.html",
+    "main.f855e6bc.css.map": "/excel-file-generator/static/css/main.f855e6bc.css.map",
+    "main.3d8ae718.js.map": "/excel-file-generator/static/js/main.3d8ae718.js.map",
+    "453.da4d770b.chunk.js.map": "/excel-file-generator/static/js/453.da4d770b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f855e6bc.css",
+    "static/js/main.3d8ae718.js"
+  ]
+}
