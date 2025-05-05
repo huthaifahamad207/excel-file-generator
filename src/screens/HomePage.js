@@ -39,8 +39,8 @@ function HomePage() {
     reader.readAsBinaryString(file);
   };
 
-  const handleReview = (row) => {
-    navigate("/review", { state: { rowData: row, columnNames: headers } });
+  const handleGenerateLabels = () => {
+    navigate("/review", { state: { allData: data, columnNames: headers } });
   };
 
   return (
@@ -83,7 +83,7 @@ function HomePage() {
         <label
           htmlFor="upload"
           style={{
-            backgroundColor: "#217346", // Excel green color
+            backgroundColor: "#217346",
             color: "white",
             padding: "12px 24px",
             borderRadius: "4px",
@@ -122,125 +122,116 @@ function HomePage() {
       )}
 
       {data.length > 0 && (
-        <div
-          style={{
-            width: "95%",
-            maxWidth: "1200px",
-            margin: "0 auto",
-            marginTop: "30px",
-            overflowX: "auto",
-            position: "relative",
-            zIndex: 2,
-            boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-            borderRadius: "8px",
-            backgroundColor: "white",
-          }}
-        >
-          <table
+        <>
+          <div
             style={{
-              borderCollapse: "collapse",
-              width: "100%",
-              fontSize: "14px",
+              width: "95%",
+              maxWidth: "1200px",
+              margin: "0 auto",
+              marginTop: "30px",
+              overflowX: "auto",
+              position: "relative",
+              zIndex: 2,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
+              borderRadius: "8px",
+              backgroundColor: "white",
             }}
           >
-            <thead>
-              <tr>
-                {headers.map((header, index) => (
-                  <th
-                    key={index}
-                    style={{
-                      padding: "12px 15px",
-                      textAlign: "left",
-                      backgroundColor: "#217346", // Excel header green
-                      color: "white",
-                      fontWeight: "bold",
-                      position: "sticky",
-                      top: 0,
-                      minWidth: "100px",
-                      borderRight: "1px solid rgba(255,255,255,0.2)",
-                    }}
-                  >
-                    {header}
-                  </th>
-                ))}
-                <th
-                  style={{
-                    padding: "12px 15px",
-                    textAlign: "center",
-                    backgroundColor: "#217346",
-                    color: "white",
-                    fontWeight: "bold",
-                    position: "sticky",
-                    top: 0,
-                    minWidth: "120px",
-                  }}
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map((row, rowIndex) => (
-                <tr
-                  key={rowIndex}
-                  style={{
-                    backgroundColor: rowIndex % 2 === 0 ? "#ffffff" : "#f9f9f9",
-                    ":hover": {
-                      backgroundColor: "#f0f7f4",
-                    },
-                  }}
-                >
-                  {row.map((cell, cellIndex) => (
-                    <td
-                      key={cellIndex}
+            <table
+              style={{
+                borderCollapse: "collapse",
+                width: "100%",
+                fontSize: "14px",
+              }}
+            >
+              <thead>
+                <tr>
+                  {headers.map((header, index) => (
+                    <th
+                      key={index}
                       style={{
-                        padding: "10px 15px",
+                        padding: "12px 15px",
                         textAlign: "left",
-                        verticalAlign: "middle",
-                        borderBottom: "1px solid #e0e0e0",
-                        borderRight: "1px solid #e0e0e0",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        maxWidth: "300px",
-                      }}
-                    >
-                      {cell}
-                    </td>
-                  ))}
-                  <td
-                    style={{
-                      padding: "10px 15px",
-                      textAlign: "center",
-                      borderBottom: "1px solid #e0e0e0",
-                    }}
-                  >
-                    <button
-                      onClick={() => handleReview(row)}
-                      style={{
-                        padding: "8px 16px",
-                        fontSize: "13px",
                         backgroundColor: "#217346",
                         color: "white",
-                        border: "none",
-                        borderRadius: "4px",
-                        cursor: "pointer",
-                        transition: "all 0.3s",
-                        fontWeight: "500",
-                        ":hover": {
-                          backgroundColor: "#1a5d38",
-                          transform: "translateY(-1px)",
-                        },
+                        fontWeight: "bold",
+                        position: "sticky",
+                        top: 0,
+                        minWidth: "100px",
+                        borderRight: "1px solid rgba(255,255,255,0.2)",
                       }}
                     >
-                      Review
-                    </button>
-                  </td>
+                      {header}
+                    </th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {data.map((row, rowIndex) => (
+                  <tr
+                    key={rowIndex}
+                    style={{
+                      backgroundColor:
+                        rowIndex % 2 === 0 ? "#ffffff" : "#f9f9f9",
+                      ":hover": {
+                        backgroundColor: "#f0f7f4",
+                      },
+                    }}
+                  >
+                    {row.map((cell, cellIndex) => (
+                      <td
+                        key={cellIndex}
+                        style={{
+                          padding: "10px 15px",
+                          textAlign: "left",
+                          verticalAlign: "middle",
+                          borderBottom: "1px solid #e0e0e0",
+                          borderRight: "1px solid #e0e0e0",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          maxWidth: "300px",
+                        }}
+                      >
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "30px",
+            }}
+          >
+            <button
+              onClick={handleGenerateLabels}
+              style={{
+                padding: "12px 24px",
+                fontSize: "16px",
+                backgroundColor: "#217346",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: "pointer",
+                transition: "all 0.3s",
+                fontWeight: "bold",
+                boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                ":hover": {
+                  backgroundColor: "#1a5d38",
+                  transform: "translateY(-2px)",
+                },
+              }}
+            >
+              Generate Shipping Labels
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

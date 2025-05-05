@@ -1,15 +1,9 @@
-import React, { useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useNavigate,
-} from "react-router-dom";
-import * as XLSX from "xlsx";
+import React from "react";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ReviewPage from "./screens/ReviewPage";
 import HomePage from "./screens/HomePage";
-
 import "./App.css";
+
 function App() {
   return (
     <Router>
